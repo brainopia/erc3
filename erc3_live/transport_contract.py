@@ -9,7 +9,7 @@ Verified against the live public site on 2026-03-11:
   - sample curl commands constructed as /<api_root>/<task_id>/<endpoint>
 - assets/client.js defines dispatch(benchmarkId, taskId, routePath, body) as POST /<benchmarkId>/<taskId><routePath>
 - Task-local API calls therefore use HTTP JSON POST requests to /<api_root>/<task_id>/<endpoint>
-- Browser fallback must mirror the same UI dispatch semantics when direct HTTP fails at transport level
+- Task-local requests fail directly on HTTP transport errors; there is no browser fallback path
 - POST /tasks/complete with {task_id} returns JSON including eval.score and eval.logs
 - No login cookie or CSRF token was required for verified anonymous start and complete flow
 

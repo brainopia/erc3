@@ -3,7 +3,7 @@ class ERC3LiveError(Exception):
 
 
 class TransportError(ERC3LiveError):
-    """Network or browser transport failed."""
+    """Network transport failed."""
 
 
 class ParseError(ERC3LiveError):

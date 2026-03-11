@@ -54,8 +54,8 @@ def main() -> int:
     ensure(str(runtime.get("task_id", "")).startswith("tsk-"), f"unexpected task id: {run_result}")
     ensure(bool(runtime.get("api_root")), f"missing api_root: {run_result}")
     ensure(metadata.get("completion_status") in {"completed", "already_completed"}, f"unexpected completion status: {run_result}")
-    ensure(metadata.get("dispatch_via") in {"http", "browser"}, f"missing dispatch transport metadata: {run_result}")
-    ensure(run_result.get("status") in {"completed", "agent_failed"}, f"unexpected runner status: {run_result}")
+    ensure(metadata.get("dispatch_via") == "http", f"unexpected dispatch transport metadata: {run_result}")
+    ensure(run_result.get("status") == "completed", f"unexpected runner status: {run_result}")
     ensure(isinstance(run_result.get("score"), (int, float)), f"missing score: {run_result}")
     ensure(isinstance(run_result.get("logs"), str), f"missing logs: {run_result}")
 

@@ -9,8 +9,6 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Iterator
 
-import pytest
-
 from erc3_live.client import TaskClient
 from erc3_live.public_sdk import PublicERC3
 from erc3_live.transport import LiveTransport
@@ -18,14 +16,14 @@ from erc3_live.transport import LiveTransport
 DEFAULT_BENCHMARK = os.environ.get("ERC3_LIVE_BENCHMARK", "erc3-prod")
 DEFAULT_SPEC_ID = os.environ.get("ERC3_LIVE_SPEC_ID", "t025")
 DEFAULT_LIST_MIN_COUNT = int(os.environ.get("ERC3_LIVE_LIST_MIN_COUNT", "50"))
-ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_MATRIX_SPEC_IDS = tuple(
+    spec.strip()
+    for spec in os.environ.get("ERC3_LIVE_MATRIX_SPEC_IDS", "t001,t010,t025").split(",")
+    if spec.strip()
+)
+ROOT = Path(__file__).resolve().parents[3]
 MINIMAL_AGENT = ROOT / "examples" / "minimal_agent.py"
-RUN_LIVE_E2E = os.environ.get("ERC3_RUN_LIVE_E2E") == "1"
-
-
-def require_live_e2e() -> None:
-    if not RUN_LIVE_E2E:
-        pytest.skip("live E2E tests are disabled; set ERC3_RUN_LIVE_E2E=1")
+AGENT_FIXTURES = ROOT / "erc3_live" / "tests" / "e2e_agents.py"
 
 
 def assert_task_specs_shape(tasks: list[Any], *, min_count: int = DEFAULT_LIST_MIN_COUNT) -> None:
@@ -83,12 +81,14 @@ def result_snapshot(result: Any) -> dict[str, Any]:
     return asdict(result)
 
 
-@pytest.mark.live
-def test_live_listing_smoke() -> None:
-    require_live_e2e()
-    transport = LiveTransport()
-    try:
-        tasks = transport.list_public_tasks(DEFAULT_BENCHMARK)
-        assert_task_specs_shape(tasks)
-    finally:
-        transport.close()
+def assert_http_dispatch(snapshot: dict[str, Any], *, api_root: str, task_id: str, endpoint: str) -> None:
+    assert snapshot["via"] == "http", snapshot
+    assert snapshot["path"] == f"/{api_root}/{task_id}{endpoint}", snapshot
+    assert isinstance(snapshot["payload"], dict), snapshot
+
+
+def assert_completion_shape(completion: Any) -> None:
+    assert completion.status in {"completed", "already_completed"}, completion
+    assert isinstance(completion.score, (int, float)), completion
+    assert isinstance(completion.logs, str), completion
+    assert isinstance(completion.raw, dict), completion

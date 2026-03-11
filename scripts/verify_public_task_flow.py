@@ -9,7 +9,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from erc3_live.client import TaskClient
-from erc3_live.tests.e2e_helpers import DEFAULT_BENCHMARK, DEFAULT_SPEC_ID, assert_task_specs_shape, dispatch_snapshot
+from erc3_live.tests.e2e.helpers import DEFAULT_BENCHMARK, DEFAULT_SPEC_ID, assert_http_dispatch, assert_task_specs_shape, dispatch_snapshot
 from erc3_live.transport import LiveTransport
 
 
@@ -54,10 +54,7 @@ def main() -> int:
             (read_only_endpoint, dispatch_snapshot(read_only_payload)),
             ("/respond", dispatch_snapshot(respond_payload)),
         ):
-            expected_path = f"/{run.runtime.api_root}/{run.runtime.task_id}{endpoint}"
-            ensure(snapshot["via"] in {"http", "browser"}, f"unexpected dispatch mode for {endpoint}: {snapshot}")
-            ensure(snapshot["path"] == expected_path, f"unexpected dispatch path for {endpoint}: {snapshot}")
-            ensure(isinstance(snapshot["payload"], dict), f"non-object payload for {endpoint}: {snapshot}")
+            assert_http_dispatch(snapshot, api_root=run.runtime.api_root or "", task_id=run.runtime.task_id, endpoint=endpoint)
             if endpoint != "/respond":
                 ensure(bool(snapshot["payload"]), f"empty payload for {endpoint}: {snapshot}")
 

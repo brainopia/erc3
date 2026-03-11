@@ -58,20 +58,9 @@ class LiveTransport:
             raise TransportError(f"Task {runtime.task_id} is missing api_root; cannot dispatch {normalized_route}")
 
         http_path = f"/{api_root}/{runtime.task_id}{normalized_route}"
-        try:
-            response = self.runtime.post_json(http_path, payload)
-            runtime.dispatch_via = "http"
-            return DispatchResult(payload=response, via="http", path=http_path)
-        except TransportError as http_exc:
-            response = self.runtime.dispatch_via_browser(
-                task_url=runtime.task_url,
-                api_root=api_root,
-                task_id=runtime.task_id,
-                route_path=normalized_route,
-                body=payload,
-            )
-            runtime.dispatch_via = "browser"
-            return DispatchResult(payload=response, via="browser", path=http_path) if response else self._browser_failure(http_path, http_exc)
+        response = self.runtime.post_json(http_path, payload)
+        runtime.dispatch_via = "http"
+        return DispatchResult(payload=response, via="http", path=http_path)
 
     def complete_task(self, task_id: str) -> TaskCompletion:
         payload = self.runtime.post_json("/tasks/complete", {"task_id": task_id})
@@ -79,7 +68,3 @@ class LiveTransport:
         if status not in {"completed", "already_completed"}:
             raise TaskStateError(f"Unexpected task completion status: {status}")
         return TaskCompletion(status=status, score=score, logs=logs, raw=payload)
-
-    @staticmethod
-    def _browser_failure(http_path: str, http_exc: TransportError) -> DispatchResult:
-        raise TransportError(f"Task endpoint failed for {http_path}; HTTP error: {http_exc}")

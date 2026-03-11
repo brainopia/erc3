@@ -20,10 +20,12 @@ def load_agent_callable(agent_path: str) -> AgentCallable:
         raise AgentExecutionError(f"Failed to load agent module from {agent_path}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    for name in ("run_agent", "solve"):
-        candidate = getattr(module, name, None)
-        if callable(candidate):
-            return candidate
+    run_agent = getattr(module, "run_agent", None)
+    if callable(run_agent):
+        return run_agent
+    solve = getattr(module, "solve", None)
+    if callable(solve):
+        return lambda task_client, task_info: solve(task_info, task_client)
     raise AgentExecutionError("Agent module must expose run_agent(task_client, task_info) or solve(task_info, client)")
 
 
