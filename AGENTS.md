@@ -19,7 +19,6 @@
 
 ## Критические инварианты
 
-- Runtime теперь только HTTP. Прежнего браузерного fallback-пути больше нет.
 - Этот репозиторий проверяет wrapper и live execution flow, а не доказывает, что агент конкурентоспособен на всём ERC3.
 - ERC3 проверяет не только lookup: важны permissions, мутации, structured `/respond`, корректный `outcome`, `links`, ambiguity и unsupported-ветки.
 - Если вы меняете public execution flow, недостаточно локального чтения кода: нужны соответствующие проверки из `docs/testing-and-verification.ru.md`.

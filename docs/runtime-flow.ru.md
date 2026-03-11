@@ -19,7 +19,6 @@
 Чего здесь нет:
 - парсинга HTML
 - task-логики
-- fallback в браузер
 - knowledge о `PublicTaskSpec` или `PublicTaskResult`
 
 Это намеренно самый узкий слой.
