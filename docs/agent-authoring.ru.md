@@ -2,6 +2,8 @@
 
 Читайте этот файл, если вы добавляете новый агент, меняете контракт agent entrypoint или готовите smoke-агента для проверок.
 
+Если вы попали сюда напрямую без общего контекста, сначала откройте `AGENTS.md`, затем при необходимости `README.md`. Этот документ покрывает только агентный маршрут.
+
 ## Поддерживаемые entrypoint’ы
 
 `erc3_live/runner.py` поддерживает два варианта.
@@ -68,7 +70,7 @@ def run_agent(task_client, task_info) -> None:
 3. Перед опасной мутацией — проверка прав
 4. В конце — только структурированный `/respond`
 
-См. `docs/erc3-scope.ru.md` и `ERC3_RU_REPORT.md`.
+См. `docs/erc3-scope.ru.md` и `docs/ERC3_RU_REPORT.md`.
 
 ## Failure path
 
@@ -92,6 +94,8 @@ def run_agent(task_client, task_info) -> None:
 - `erc3_live/tests/failing_agent_fixture.py` — намеренно падающий агент для проверки failure path
 
 ## Как проверять нового агента
+
+Канонический набор уровней проверки и критериев достаточного доказательства собран в `docs/testing-and-verification.ru.md`. Ниже — минимальный агентный маршрут.
 
 Минимум:
 

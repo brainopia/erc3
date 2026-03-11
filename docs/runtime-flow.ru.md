@@ -2,6 +2,8 @@
 
 Читайте этот файл, если меняете рантайм, transport, SDK, runner или CLI.
 
+Если вы попали сюда напрямую без общей навигации, сначала сверитесь с `AGENTS.md` или `README.md`. Канонический набор проверок для изменений в execution flow собран в `docs/testing-and-verification.ru.md`.
+
 ## Слои
 
 ### 1. `HttpRuntime`
@@ -106,6 +108,7 @@
 - `erc3_live/tests/test_parsing.py`
 - `erc3_live/tests/test_transport_contract.py`
 - `erc3_live/tests/e2e/test_sdk_flow.py`
+- `docs/testing-and-verification.ru.md`
 
 ### Ошибка 2. Ломают failure path агента
 
@@ -114,6 +117,7 @@
 Проверять:
 - `erc3_live/tests/e2e/test_agent_flow.py`
 - `scripts/verify_cli_flow.py`
+- `docs/testing-and-verification.ru.md`
 
 ### Ошибка 3. Дублируют форматирование JSON в CLI-ветках
 
