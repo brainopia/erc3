@@ -5,15 +5,15 @@ from typing import Any
 
 import requests
 
-from .browser_runtime import BrowserRuntime
 from .errors import ParseError, TaskStateError, TransportError
+from .http_runtime import HttpRuntime
 from .models import DispatchResult, PublicTaskRun, PublicTaskSpec, TaskCompletion, TaskRuntimeInfo
 from .parsing import parse_completion_response, parse_public_task_specs, parse_task_page_metadata
 
 
 class LiveTransport:
     def __init__(self, base_url: str = "https://erc.timetoact-group.at", session: requests.Session | None = None) -> None:
-        self.runtime = BrowserRuntime(session=session or requests.Session(), base_url=base_url)
+        self.runtime = HttpRuntime(session=session or requests.Session(), base_url=base_url)
         self.runtime.session.headers.update({"User-Agent": self.runtime.user_agent})
 
     def close(self) -> None:

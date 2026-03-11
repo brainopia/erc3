@@ -34,26 +34,23 @@ def main(argv: list[str] | None = None) -> int:
     core = PublicERC3()
     try:
         if args.command == "list-tasks":
-            tasks = core.list_public_tasks(args.benchmark)
-            print(json.dumps([asdict(task) for task in tasks], ensure_ascii=False, indent=2))
-            return 0
-        agent = load_agent_callable(args.agent)
-        if args.command == "run-task":
-            result = run_task_with_agent(core, args.benchmark, args.spec, agent)
-            print(json.dumps(asdict(result), ensure_ascii=False, indent=2, default=str))
-            return 0
-        if args.command == "run-all":
+            payload = [asdict(task) for task in core.list_public_tasks(args.benchmark)]
+        elif args.command == "run-task":
+            agent = load_agent_callable(args.agent)
+            payload = asdict(run_task_with_agent(core, args.benchmark, args.spec, agent))
+        elif args.command == "run-all":
+            agent = load_agent_callable(args.agent)
             results = run_many(core, args.benchmark, agent, spec_ids=args.spec_ids)
-            summary = core.aggregate_results(results)
-            print(json.dumps({
+            payload = {
                 "results": [asdict(result) for result in results],
-                "summary": asdict(summary),
-            }, ensure_ascii=False, indent=2, default=str))
-            return 0
-        parser.error(f"Unknown command: {args.command}")
+                "summary": asdict(core.aggregate_results(results)),
+            }
+        else:
+            parser.error(f"Unknown command: {args.command}")
+        print(json.dumps(payload, ensure_ascii=False, indent=2, default=str))
+        return 0
     finally:
         core.close()
-    return 1
 
 
 if __name__ == "__main__":

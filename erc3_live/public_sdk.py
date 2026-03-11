@@ -11,18 +11,21 @@ from .transport import LiveTransport
 class PublicERC3:
     def __init__(self, transport: LiveTransport | None = None) -> None:
         self.transport = transport or LiveTransport()
+        self._task_specs_by_benchmark: dict[str, dict[str, PublicTaskSpec]] = {}
 
     def close(self) -> None:
         self.transport.close()
 
     def list_public_tasks(self, benchmark_id: str) -> list[PublicTaskSpec]:
-        return self.transport.list_public_tasks(benchmark_id)
+        tasks = self.transport.list_public_tasks(benchmark_id)
+        self._task_specs_by_benchmark[benchmark_id] = {task.spec_id: task for task in tasks}
+        return tasks
 
     def start_public_task(self, benchmark_id: str, spec_id: str) -> PublicTaskRun:
         run = self.transport.start_public_task(benchmark_id, spec_id)
-        specs = {spec.spec_id: spec for spec in self.list_public_tasks(benchmark_id)}
-        if spec_id in specs:
-            run.spec = specs[spec_id]
+        cached_spec = self._task_specs_by_benchmark.get(benchmark_id, {}).get(spec_id)
+        if cached_spec is not None:
+            run.spec = cached_spec
         return run
 
     def get_task_client(self, run: PublicTaskRun) -> TaskClient:

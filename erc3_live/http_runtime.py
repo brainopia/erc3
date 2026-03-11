@@ -9,7 +9,7 @@ from .errors import TransportError
 
 
 @dataclass(slots=True)
-class BrowserRuntime:
+class HttpRuntime:
     session: requests.Session
     base_url: str = "https://erc.timetoact-group.at"
     user_agent: str = "erc3-live-wrapper/0.1"
