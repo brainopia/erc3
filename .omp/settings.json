@@ -1,6 +1,0 @@
-{
-  "lsp.diagnosticsOnWrite": true,
-  "extensions": [
-    "~/.omp/agent/extensions/python-lsp.ts"
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "servers": {
-    "python-lsp": {
-      "command": "pylsp",
-      "fileTypes": [".py"],
-      "rootMarkers": ["pytest.ini", ".git"]
-    }
-  }
-}
